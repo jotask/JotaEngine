@@ -28,10 +28,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertex.glsl">
+    <None Include="lamp_fragment.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="fragment.glsl">
+    <None Include="lamp_vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="light_fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="light_vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
