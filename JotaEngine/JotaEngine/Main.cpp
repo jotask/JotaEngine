@@ -64,7 +64,7 @@ int main()
 	glfwSetScrollCallback(window, ScrollCallback);
 
 	// disable mouse on screen
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Enable glew
 	glewExperimental = GL_TRUE;
@@ -185,6 +185,10 @@ int main()
 		lastFrame = currentFrame;
 		// Check if any event has been activated
 		glfwPollEvents();
+
+		lightPos.x = glm::cos(currentFrame) * 2.0f;
+		lightPos.y = glm::sin(currentFrame) * 2.0f;
+		lightPos.z = glm::sin(currentFrame) * 2.0f;
 
 		DoMovement();
 
