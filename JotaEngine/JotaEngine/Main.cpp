@@ -2,6 +2,10 @@
 
 #define GLEW_STATIC
 
+#include <glm.hpp>
+#include <gtc\matrix_transform.hpp>
+#include <gtc\type_ptr.hpp>
+
 #include <GL\glew.h>
 
 #include <GLFW\glfw3.h>
@@ -83,6 +87,14 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.use();
+
+		glm::mat4 transform;
+		transform = glm::translate(transform, glm::vec3 (0.5f, -0.5f, 0.0f));
+		transform = glm::rotate(transform, (GLfloat) glfwGetTime() * -5.0f, glm::vec3(0.0f, 0.0f, 1.0f) );
+
+		GLint transformLocation = glGetUniformLocation(shader.program, "transform");
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
