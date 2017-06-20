@@ -51,15 +51,55 @@ int main()
 	// Define the viewport dimensions
 	glViewport(0, 0, screenWidht, screenHeight);
 
-	Shader shader("vertex.glsl", "fragment.glsl");
+	glEnable(GL_DEPTH_TEST);
 
-	// Triangle
-	GLfloat vertices[] =
-	{
-		-0.5f, -0.5f, 0.0f,			1.0f, 0.0f, 0.0f, // bottom left
-		0.5f, -0.5f, 0.0f,			0.0f, 1.0f, 0.0f, // bottom right
-		0.0f, 0.5f, 0.0f,			0.0f, 0.0f, 1.0f,// top triangle
-	};
+	Shader shader("vertex.glsl", "fragment.glsl");
+	
+    // use with Perspective Projection
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+        
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f
+    };
+    
 
 	GLuint VBO, VAO;
 	glGenVertexArrays(1, &VAO);
@@ -77,6 +117,9 @@ int main()
 
 	glBindVertexArray(0);
 
+	glm::mat4 projection;
+	projection = glm::perspective(45.0f, (GLfloat)(screenWidht / screenHeight), 0.1f, 1000.0f);
+
 	// Main loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -84,19 +127,25 @@ int main()
 		glfwPollEvents();
 
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();
 
-		glm::mat4 transform;
-		transform = glm::translate(transform, glm::vec3 (0.5f, -0.5f, 0.0f));
-		transform = glm::rotate(transform, (GLfloat) glfwGetTime() * -5.0f, glm::vec3(0.0f, 0.0f, 1.0f) );
+		glm::mat4 model;
+		glm::mat4 view;
+		model = glm::rotate(model, (GLfloat)glfwGetTime() * 1.0f, glm::vec3(0.5f, 1.0f, 0.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-		GLint transformLocation = glGetUniformLocation(shader.program, "transform");
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+		GLint modelLocation = glGetUniformLocation(shader.program, "model");
+		GLint viewLocation = glGetUniformLocation(shader.program, "view");
+		GLint projectionLocation = glGetUniformLocation(shader.program, "projection");
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 		// Swap screen buffers
